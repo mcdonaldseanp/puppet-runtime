@@ -101,7 +101,7 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
     # TODO: Remove this patch once PA-1607 is resolved.
     pkg.apply_patch "#{base}/aix_revert_configure_in_changes.patch"
 
-    pkg.apply_patch "#{base}/aix_ruby_libpath_with_opt_dir.patch"
+    # pkg.apply_patch "#{base}/aix_ruby_libpath_with_opt_dir.patch"
     pkg.apply_patch "#{base}/aix_use_pl_build_tools_autoconf.patch"
     pkg.apply_patch "#{base}/aix_ruby_2.1_fix_make_test_failure.patch"
     pkg.apply_patch "#{base}/Remove-O_CLOEXEC-check-for-AIX-builds.patch"

@@ -170,7 +170,7 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
     'RBCONFIG_CHANGES',
     {
       "warnflags" => '"-Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wno-tautological-compare -Wunused-variable -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat -Wsuggest-attribute=noreturn -Wsuggest-attribute=format -Wimplicit-fallthrough=0 -Wno-attributes"'
-    }
+    }.to_s
   )
   rbconfig_location = ''
 

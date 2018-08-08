@@ -179,7 +179,7 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
     [
       "#{settings[:ruby_bindir]}/ruby ../rbconfig-update.rb #{rbconfig_location}",
       "cp #{target_dir}/rbconfig.rb #{settings[:datadir]}/doc/rbconfig-2.5.1-orig.rb",
-      "cp ../new_rbconfig.rb #{target_dir}/rbconfig.rb",
+      "cp new_rbconfig.rb #{target_dir}/rbconfig.rb",
   ]
   end
 

@@ -166,31 +166,48 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
   # INSTALL
   #########
 
-  if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix? || platform.is_windows?
-    # Here we replace the rbconfig from our ruby compiled with our toolchain
-    # with an rbconfig from a ruby of the same version compiled with the system
-    # gcc. Without this, the rbconfig will be looking for a gcc that won't
-    # exist on a user system and will also pass flags which may not work on
-    # that system.
-    # We also disable a safety check in the rbconfig to prevent it from being
-    # loaded from a different ruby, because we're going to do that later to
-    # install compiled gems.
-    #
-    # On AIX we build everything using our own GCC. This means that gem
-    # installing a compiled gem would not work without us shipping that gcc.
-    # This tells the ruby setup that it can use the default system gcc rather
-    # than our own.
-    target_dir = File.join(settings[:ruby_dir], 'lib', 'ruby', '2.5.0', rbconfig_info[settings[:platform_triple]][:target_double])
-    sed = "sed"
-    sed = "gsed" if platform.is_solaris?
-    sed = "/opt/freeware/bin/sed" if platform.is_aix?
-    pkg.install do
-      [
-        "#{sed} -i 's|raise|warn|g' #{target_dir}/rbconfig.rb",
-        "mkdir -p #{settings[:datadir]}/doc",
-        "cp #{target_dir}/rbconfig.rb #{settings[:datadir]}/doc/rbconfig-2.5.1-orig.rb",
-        "cp ../rbconfig-251-#{settings[:platform_triple]}.rb #{target_dir}/rbconfig.rb",
-      ]
-    end
+  rbconfig_changes = {
+    "warnflags" => '"-Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wno-tautological-compare -Wunused-variable -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat -Wsuggest-attribute=noreturn -Wsuggest-attribute=format -Wimplicit-fallthrough=0 -Wno-attributes"'
+  }
+  rbconfig_location = ''
+
+  pkg.add_source("file://resources/files/rbconfig-update.rb.erb")
+
+  target_dir = "$(#{settings[:ruby_bindir]}/ruby -e 'puts RbConfig::CONFIG[\"topdir\"]')"
+
+  pkg.install do
+    [
+      "#{settings[:ruby_bindir]}/ruby ../rbconfig-update.rb #{rbconfig_location}",
+      "cp #{target_dir}/rbconfig.rb #{settings[:datadir]}/doc/rbconfig-2.5.1-orig.rb",
+      "cp ../new_rbconfig.rb #{target_dir}/rbconfig.rb",
+  ]
   end
+
+  # if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix? || platform.is_windows?
+  #   # Here we replace the rbconfig from our ruby compiled with our toolchain
+  #   # with an rbconfig from a ruby of the same version compiled with the system
+  #   # gcc. Without this, the rbconfig will be looking for a gcc that won't
+  #   # exist on a user system and will also pass flags which may not work on
+  #   # that system.
+  #   # We also disable a safety check in the rbconfig to prevent it from being
+  #   # loaded from a different ruby, because we're going to do that later to
+  #   # install compiled gems.
+  #   #
+  #   # On AIX we build everything using our own GCC. This means that gem
+  #   # installing a compiled gem would not work without us shipping that gcc.
+  #   # This tells the ruby setup that it can use the default system gcc rather
+  #   # than our own.
+  #   target_dir = File.join(settings[:ruby_dir], 'lib', 'ruby', '2.5.0', rbconfig_info[settings[:platform_triple]][:target_double])
+  #   sed = "sed"
+  #   sed = "gsed" if platform.is_solaris?
+  #   sed = "/opt/freeware/bin/sed" if platform.is_aix?
+  #   pkg.install do
+  #     [
+  #       "#{sed} -i 's|raise|warn|g' #{target_dir}/rbconfig.rb",
+  #       "mkdir -p #{settings[:datadir]}/doc",
+  #       "cp #{target_dir}/rbconfig.rb #{settings[:datadir]}/doc/rbconfig-2.5.1-orig.rb",
+  #       "cp ../rbconfig-251-#{settings[:platform_triple]}.rb #{target_dir}/rbconfig.rb",
+  #     ]
+  #   end
+  # end
 end

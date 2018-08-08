@@ -5,13 +5,12 @@
 # a copy of an existing rbconfig with updated entries.
 #
 # entries to update should be included in the static CHANGES hash
-# inside this file. The normal use case of this file it to provide
-# it as an erb file where the CHANGES hash is filled in using erb.
+# inside this file.
 #
 # **********************
 
-ORIGIN_RBCONF_LOCATION = ARGV[0] || RbConfig::CONFIG["topdir"]
-CHANGES = <%= self.rbconfig_changes %>
+ORIGIN_RBCONF_LOCATION = ENV['RBCONF_LOCATION'] || RbConfig::CONFIG["topdir"]
+CHANGES = instance_eval(ENV['RBCONF_CHANGES'])
 
 # replace_line
 #
@@ -44,3 +43,4 @@ File.open(rbconfig_location, "r").readlines.each do |line|
   end
 end
 new_rbconfig.close
+puts rbconfig_location

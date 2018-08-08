@@ -166,18 +166,21 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
   # INSTALL
   #########
 
-  @rbconfig_changes = {
-    "warnflags" => '"-Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wno-tautological-compare -Wunused-variable -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat -Wsuggest-attribute=noreturn -Wsuggest-attribute=format -Wimplicit-fallthrough=0 -Wno-attributes"'
-  }
+  pkg.environment(
+    'RBCONFIG_CHANGES',
+    {
+      "warnflags" => '"-Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wno-tautological-compare -Wunused-variable -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat -Wsuggest-attribute=noreturn -Wsuggest-attribute=format -Wimplicit-fallthrough=0 -Wno-attributes"'
+    }
+  )
   rbconfig_location = ''
 
-  pkg.add_source("file://resources/files/rbconfig-update.rb.erb", erb: true)
+  pkg.add_source("file://resources/files/rbconfig-update.rb.erb")
 
   target_dir = "$(#{settings[:ruby_bindir]}/ruby -e 'puts RbConfig::CONFIG[\"topdir\"]')"
 
   pkg.install do
     [
-      "#{settings[:ruby_bindir]}/ruby ../rbconfig-update.rb #{rbconfig_location}",
+      "#{settings[:ruby_bindir]}/ruby ../rbconfig-update.rb",
       "cp #{target_dir}/rbconfig.rb #{settings[:datadir]}/doc/rbconfig-2.5.1-orig.rb",
       "cp new_rbconfig.rb #{target_dir}/rbconfig.rb",
   ]

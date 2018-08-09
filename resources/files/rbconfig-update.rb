@@ -34,7 +34,7 @@ end
 # that matches any of the key value pairs listed in the CHANGES
 # hash
 def replace_line(changes, line, file)
-  chagnges.each do |change_key, change_value|
+  changes.each do |change_key, change_value|
     if line.strip.start_with?("CONFIG[\"#{change_key}\"]")
       file.puts line.sub(/CONFIG.*/, "CONFIG[\"#{change_key}\"] = \"#{change_value}\"")
       return true

@@ -177,7 +177,7 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
 
   pkg.install do
     [
-      "#{settings[:ruby_bindir]}/ruby ../rbconfig-update.rb \"#{rbconfig_changes.to_s.gsub('"', '\"')}\"}",
+      "#{settings[:ruby_bindir]}/ruby ../rbconfig-update.rb \"#{rbconfig_changes.to_s.gsub('"', '\"').gsub('\\', '\\\\')}\"}",
       "cp #{target_dir}/rbconfig.rb #{settings[:datadir]}/doc/rbconfig-2.5.1-orig.rb",
       "cp new_rbconfig.rb #{target_dir}/rbconfig.rb",
     ]

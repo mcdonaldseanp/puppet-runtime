@@ -2,73 +2,12 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
   pkg.version '2.5.1'
   pkg.md5sum "23867bc8c16c55e43b14dfe0614bcfa8"
 
+  # rbconfig-update is used to munge rbconfigs after the fact.
+  pkg.add_source("file://resources/files/rbconfig-update.rb")
+
   # Most ruby configuration happens in the base ruby config:
   instance_eval File.read('configs/components/_base-ruby.rb')
   # Configuration below should only be applicable to ruby 2.5.1
-
-  ###########
-  # RBCONFIGS
-  ###########
-
-  # These are a pretty smelly hack, and they run the risk of letting tests
-  # based on the generated data (t  hat should otherwise fail) pass
-  # erroneously. We should probably fix the "not shipping our compiler"
-  # problem that led us to do this sooner rather than later.
-  #   Ryan McKern, 26/09/2015
-  #   Reference notes:
-  #   - 6b089ed2: Provide a sane rbconfig for AIX
-  #   - 8e88a51a: (RE-5401) Add rbconfig for solaris 11 sparc
-  #   - 8f10f5f8: (RE-5400) Roll rbconfig for solaris 11 back to 2.1.6
-  #   - 741d18b1: (RE-5400) Update ruby for solaris 11 i386
-  #   - d09ed06f: (RE-5290) Update ruby to replace rbconfig for all solaris
-  #   - bba35c1e: (RE-5290) Update ruby for a cross-compile on solaris 10
-  rbconfig_info = {
-    'powerpc-ibm-aix6.1.0.0' => {
-      target_double: 'powerpc-aix6.1.0.0',
-    },
-    'powerpc-ibm-aix7.1.0.0' => {
-      target_double: 'powerpc-aix7.1.0.0',
-     },
-    'aarch64-redhat-linux' => {
-      target_double: 'aarch64-linux',
-    },
-    'ppc64le-redhat-linux' => {
-      target_double: 'powerpc64le-linux',
-    },
-    'powerpc64le-suse-linux' => {
-      target_double: 'powerpc64le-linux',
-    },
-    'powerpc64le-linux-gnu' => {
-      target_double: 'powerpc64le-linux',
-    },
-    's390x-linux-gnu' => {
-      target_double: 's390x-linux',
-    },
-    'i386-pc-solaris2.10' => {
-      target_double: 'i386-solaris2.10',
-    },
-    'sparc-sun-solaris2.10' => {
-      target_double: 'sparc-solaris2.10',
-    },
-    'i386-pc-solaris2.11' => {
-      target_double: 'i386-solaris2.11',
-    },
-    'sparc-sun-solaris2.11' => {
-      target_double: 'sparc-solaris2.11',
-    },
-    'arm-linux-gnueabihf' => {
-      target_double: 'arm-linux-eabihf'
-    },
-    'arm-linux-gnueabi' => {
-      target_double: 'arm-linux-eabi'
-    },
-    'x86_64-w64-mingw32' => {
-      target_double: 'x64-mingw32',
-    },
-    'i686-w64-mingw32' => {
-      target_double: 'i386-mingw32',
-    },
-  }
 
   #########
   # PATCHES
@@ -101,7 +40,6 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
     pkg.apply_patch "#{base}/windows_socket_compat_error.patch"
   end
 
-  # if platform.name =~ /^fedora-28/
   #   # Fedora 28 uses native GCC 8.0.1. When building ruby C extensions (in
   #   # ruby-augeas, for example) mkmf will fail when ruby 2.5.1's
   #   # CONFIG['warnflags'] are applied to a conftest with -Werror before
@@ -166,20 +104,41 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
   # INSTALL
   #########
 
-  rbconfig_changes = {
-    "warnflags" => '-Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wno-tautological-compare -Wunused-variable -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat -Wsuggest-attribute=noreturn -Wsuggest-attribute=format -Wimplicit-fallthrough=0 -Wno-attributes'
+  target_doubles = {
+    'powerpc-ibm-aix6.1.0.0' => 'powerpc-aix6.1.0.0',
+    'aarch64-redhat-linux' => 'aarch64-linux',
+    'ppc64le-redhat-linux' => 'powerpc64le-linux',
+    'powerpc64le-suse-linux' => 'powerpc64le-linux',
+    'powerpc64le-linux-gnu' => 'powerpc64le-linux',
+    's390x-linux-gnu' => 's390x-linux',
+    'i386-pc-solaris2.10' => 'i386-solaris2.10',
+    'sparc-sun-solaris2.10' => 'sparc-solaris2.10',
+    'i386-pc-solaris2.11' => 'i386-solaris2.11',
+    'sparc-sun-solaris2.11' => 'sparc-solaris2.11',
+    'arm-linux-gnueabihf' => 'arm-linux-eabihf',
+    'arm-linux-gnueabi' => 'arm-linux-eabi',
+    'x86_64-w64-mingw32' => 'x64-mingw32',
+    'i686-w64-mingw32' => 'i386-mingw32'
   }
-  rbconfig_location = ''
+  if target_doubles.has_key?(settings[:platform_triple])
+    rbconfig_topdir = File.join(settings[:ruby_dir], 'lib', 'ruby', ruby_version_y + '.0', target_doubles[settings[:platform_triple]])
+  else
+    rbconfig_topdir = "$$(#{settings[:ruby_bindir]}/ruby -e \"puts RbConfig::CONFIG[\\\"topdir\\\"]\")"
+  end
 
-  pkg.add_source("file://resources/files/rbconfig-update.rb")
+  rbconfig_changes = {}
+  if platform.name =~ /^fedora-28/
+    rbconfig_changes["warnflags"] = '-Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wno-tautological-compare -Wunused-variable -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat -Wsuggest-attribute=noreturn -Wsuggest-attribute=format -Wimplicit-fallthrough=0 -Wno-attributes'
+  elsif platform.is_aix?
+    rbconfig_changes["CC"] = "gcc"
+  end
 
-  target_dir = "$$(#{settings[:ruby_bindir]}/ruby -e \"puts RbConfig::CONFIG[\\\"topdir\\\"]\")"
 
   pkg.install do
     [
-      "#{settings[:ruby_bindir]}/ruby ../rbconfig-update.rb \"#{rbconfig_changes.to_s.gsub('"', '\"')}\"",
-      "cp #{target_dir}/rbconfig.rb #{settings[:datadir]}/doc/rbconfig-2.5.1-orig.rb",
-      "cp new_rbconfig.rb #{target_dir}/rbconfig.rb",
+      "#{settings[:ruby_bindir]}/ruby ../rbconfig-update.rb \"#{rbconfig_changes.to_s.gsub('"', '\"')}\" #{rbconfig_topdir}",
+      "cp #{rbconfig_topdir}/rbconfig.rb #{settings[:datadir]}/doc/rbconfig-2.5.1-orig.rb",
+      "cp new_rbconfig.rb #{rbconfig_topdir}/rbconfig.rb",
     ]
   end
 

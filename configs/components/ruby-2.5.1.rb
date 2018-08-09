@@ -121,7 +121,7 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
     'i686-w64-mingw32' => 'i386-mingw32'
   }
   if target_doubles.has_key?(settings[:platform_triple])
-    rbconfig_topdir = File.join(settings[:ruby_dir], 'lib', 'ruby', ruby_version_y + '.0', target_doubles[settings[:platform_triple]])
+    rbconfig_topdir = File.join(settings[:ruby_dir], 'lib', 'ruby', '2.5.0', target_doubles[settings[:platform_triple]])
   else
     rbconfig_topdir = "$$(#{settings[:ruby_bindir]}/ruby -e \"puts RbConfig::CONFIG[\\\"topdir\\\"]\")"
   end

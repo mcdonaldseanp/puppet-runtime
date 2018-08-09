@@ -167,7 +167,7 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
   #########
 
   rbconfig_changes = {
-    "warnflags" => '"-Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wno-tautological-compare -Wunused-variable -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat -Wsuggest-attribute=noreturn -Wsuggest-attribute=format -Wimplicit-fallthrough=0 -Wno-attributes"'
+    "warnflags" => '-Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wno-tautological-compare -Wunused-variable -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat -Wsuggest-attribute=noreturn -Wsuggest-attribute=format -Wimplicit-fallthrough=0 -Wno-attributes'
   }
   rbconfig_location = ''
 
@@ -177,7 +177,7 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
 
   pkg.install do
     [
-      "#{settings[:ruby_bindir]}/ruby ../rbconfig-update.rb \"#{rbconfig_changes.to_s.gsub('"', '\"').gsub('\\', '\\\\')}\"}",
+      "#{settings[:ruby_bindir]}/ruby ../rbconfig-update.rb \"#{rbconfig_changes.to_s.gsub('"', '\"')}\"",
       "cp #{target_dir}/rbconfig.rb #{settings[:datadir]}/doc/rbconfig-2.5.1-orig.rb",
       "cp new_rbconfig.rb #{target_dir}/rbconfig.rb",
     ]

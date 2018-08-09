@@ -36,11 +36,7 @@ end
 def replace_line(changes, line, file)
   chagnges.each do |change_key, change_value|
     if line.strip.start_with?("CONFIG[\"#{change_key}\"]")
-      old_value = line.split("=")[1].strip
-      # This attempts to use sub instead of forcing an entirely
-      # new string in an attempt to preserve any whitespace in the
-      # line
-      file.puts line.sub(old_value, change_value)
+      file.puts line.sub(/CONFIG.*/, "CONFIG[\"#{change_key}\"] = \"#{change_value}\"")
       return true
     end
   end

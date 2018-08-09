@@ -30,7 +30,7 @@ end
 # the rbcofig read from ORIGIN_RBCONF_LOCATION with replacements for
 # anything listed in the CHANGES hash
 new_rbconfig = File.open("new_rbconfig.rb", "w")
-rbconfig_location = File.join(ARGV[2], "rbconfig.rb")
+rbconfig_location = File.join(ARGV[1], "rbconfig.rb")
 File.open(rbconfig_location, "r").readlines.each do |line|
   unless replace_line(instance_eval(ARGV[0]), line, new_rbconfig)
     new_rbconfig.puts line

@@ -173,7 +173,7 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
 
   pkg.add_source("file://resources/files/rbconfig-update.rb")
 
-  target_dir = "$(#{settings[:ruby_bindir]}/ruby -e \"puts RbConfig::CONFIG[\\\"topdir\\\"]\")"
+  target_dir = "$$(#{settings[:ruby_bindir]}/ruby -e \"puts RbConfig::CONFIG[\\\"topdir\\\"]\")"
 
   pkg.install do
     [

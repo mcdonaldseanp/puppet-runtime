@@ -45,6 +45,8 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
     pkg.environment 'optflags', settings[:cflags]
   elsif platform.is_windows?
     pkg.environment 'optflags', settings[:cflags] + ' -O3'
+  elsif platform.is_cross_compiled?
+    pkg.environment 'CROSS_COMPILING', 'true'
   else
     pkg.environment 'optflags', '-O2'
   end

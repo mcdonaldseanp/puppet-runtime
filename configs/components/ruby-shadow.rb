@@ -15,10 +15,10 @@ component "ruby-shadow" do |pkg, settings, platform|
     if platform.architecture == 'sparc'
       pkg.environment "RUBY", settings[:host_ruby]
     end
-    ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig-#{settings[:ruby_version]}-orig.rb"
+    ruby = "#{settings[:host_ruby]} -r$(shell pwd)/ruby-#{settings[:ruby_version]}/original_rbconfig.rb"
   elsif platform.is_cross_compiled_linux?
     pkg.environment "RUBY", settings[:host_ruby]
-    ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig-#{settings[:ruby_version]}-orig.rb"
+    ruby = "#{settings[:host_ruby]} -r$(shell pwd)/ruby-#{settings[:ruby_version]}/original_rbconfig.rb"
   else
     ruby = File.join(settings[:bindir], 'ruby')
   end

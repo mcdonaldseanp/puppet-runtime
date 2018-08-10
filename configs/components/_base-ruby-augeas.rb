@@ -32,10 +32,10 @@ if platform.is_solaris?
   if platform.architecture == 'sparc'
     pkg.environment "RUBY", host_ruby
   end
-  ruby = "#{host_ruby} -r#{settings[:datadir]}/doc/rbconfig-#{ruby_version}-orig.rb"
+  ruby = "#{host_ruby} -r$(shell pwd)/ruby-#{settings[:ruby_version]}/original_rbconfig.rb"
 elsif platform.is_cross_compiled_linux?
   pkg.environment "RUBY", host_ruby
-  ruby = "#{host_ruby} -r#{settings[:datadir]}/doc/rbconfig-#{ruby_version}-orig.rb"
+  ruby = "#{host_ruby} -r$(shell pwd)/ruby-#{settings[:ruby_version]}/original_rbconfig.rb"
   pkg.environment "LDFLAGS", settings[:ldflags]
 else
   ruby = File.join(ruby_bindir, 'ruby')

@@ -22,6 +22,7 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
 
   if platform.is_cross_compiled?
     pkg.apply_patch "#{base}/uri_generic_remove_safe_nav_operator.patch"
+    pkg.apply_patch "#{base}/Replace-reference-to-RUBY-var-with-opt-pl-build-tool.patch"
   end
 
   if platform.is_aix?
@@ -45,6 +46,8 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
     pkg.environment 'optflags', settings[:cflags]
   elsif platform.is_windows?
     pkg.environment 'optflags', settings[:cflags] + ' -O3'
+  elsif platform.is_cross_compiled?
+    pkg.environment 'CROSS_COMPILING', 'true'
   else
     pkg.environment 'optflags', '-O2'
   end
@@ -88,7 +91,6 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
   #########
   # INSTALL
   #########
-
   target_doubles = {
     'powerpc-ibm-aix6.1.0.0' => 'powerpc-aix6.1.0.0',
     'aarch64-redhat-linux' => 'aarch64-linux',
@@ -120,8 +122,7 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
 
   pkg.install do
     [
-      "#{settings[:ruby_bindir]}/ruby ../rbconfig-update.rb \"#{rbconfig_changes.to_s.gsub('"', '\"')}\" #{rbconfig_topdir}",
-      "cp #{rbconfig_topdir}/rbconfig.rb #{settings[:datadir]}/doc/rbconfig-2.5.1-orig.rb",
+      "#{settings[:host_ruby]} ../rbconfig-update.rb \"#{rbconfig_changes.to_s.gsub('"', '\"')}\" #{rbconfig_topdir}",
       "cp new_rbconfig.rb #{rbconfig_topdir}/rbconfig.rb",
     ]
   end

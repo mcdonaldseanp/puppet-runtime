@@ -91,7 +91,6 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
   #########
   # INSTALL
   #########
-
   target_doubles = {
     'powerpc-ibm-aix6.1.0.0' => 'powerpc-aix6.1.0.0',
     'aarch64-redhat-linux' => 'aarch64-linux',
@@ -123,7 +122,7 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
 
   pkg.install do
     [
-      "#{settings[:ruby_bindir]}/ruby ../rbconfig-update.rb \"#{rbconfig_changes.to_s.gsub('"', '\"')}\" #{rbconfig_topdir}",
+      "#{settings[:host_rubys]} ../rbconfig-update.rb \"#{rbconfig_changes.to_s.gsub('"', '\"')}\" #{rbconfig_topdir}",
       "cp #{rbconfig_topdir}/rbconfig.rb #{settings[:datadir]}/doc/rbconfig-2.5.1-orig.rb",
       "cp new_rbconfig.rb #{rbconfig_topdir}/rbconfig.rb",
     ]

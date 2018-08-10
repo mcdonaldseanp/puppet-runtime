@@ -72,7 +72,7 @@ end
 #######
 
 pkg.build do
-  "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"
+  "#{platform[:make]}"
 end
 
 #########
@@ -96,7 +96,7 @@ if platform.is_windows? && ruby_version_condensed.to_i < 251
 end
 
 pkg.install do
-  [ "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install" ]
+  [ "#{platform[:make]} " ]
 end
 
 if platform.is_windows? && ruby_version_condensed.to_i > 250

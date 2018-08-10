@@ -22,6 +22,7 @@ component 'ruby-2.5.1' do |pkg, settings, platform|
 
   if platform.is_cross_compiled?
     pkg.apply_patch "#{base}/uri_generic_remove_safe_nav_operator.patch"
+    pkg.apply_patch "#{base}/Revert-mkconfig.rb-remove-cross_compiling.patch"
   end
 
   if platform.is_aix?

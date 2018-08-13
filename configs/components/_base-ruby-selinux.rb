@@ -37,7 +37,7 @@ if platform.is_cross_compiled_linux?
   cc = "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
   system_include = "-I/opt/pl-build-tools/#{settings[:platform_triple]}/sysroot/usr/include"
   pkg.environment "RUBY", host_ruby
-  ruby = "#{host_ruby} -r#{settings[:datadir]}/doc/rbconfig-#{ruby_version}-orig.rb"
+  ruby = "#{host_ruby} -r../ruby-#{settings[:ruby_version]}/original_rbconfig.rb"
 end
 
 pkg.build do

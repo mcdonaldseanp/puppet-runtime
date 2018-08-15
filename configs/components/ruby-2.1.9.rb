@@ -138,6 +138,11 @@ component "ruby-2.1.9" do |pkg, settings, platform|
   rbconfig_changes = {}
   if platform.is_aix?
     rbconfig_changes["CC"] = "gcc"
+  elsif platform.name =~ /el-7-ppc64le/
+    rbconfig_changes["CC"] = "gcc"
+    # EL 7 on POWER will fail with -Wl,--compress-debug-sections=zlib so this
+    # will remove that entry
+    rbconfig_changes["DLDFLAGS"] = "-Wl,-rpath=/opt/puppetlabs/puppet/lib -L/opt/puppetlabs/puppet/lib  -Wl,-rpath,/opt/puppetlabs/puppet/lib"
   elsif platform.is_cross_compiled? || platform.is_solaris?
     rbconfig_changes["CC"] = "gcc"
     rbconfig_changes["warnflags"] = "-Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wno-tautological-compare -Wno-parentheses-equality -Wno-constant-logical-operand -Wno-self-assign -Wunused-variable -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat -Wsuggest-attribute=noreturn -Wsuggest-attribute=format -Wno-maybe-uninitialized"

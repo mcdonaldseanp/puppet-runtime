@@ -9,6 +9,7 @@ project 'pe-bolt-server-runtime-main' do |proj|
 
   proj.setting(:ruby_version, '3.2.2')
   proj.setting(:openssl_version, '3.0')
+  proj.setting(:use_legacy_openssl_algos, true)
 
   instance_eval File.read(File.join(File.dirname(__FILE__), '_shared-pe-bolt-server_with_ruby.rb'))
 
